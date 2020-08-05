@@ -8,8 +8,14 @@ class CreateTransactionService {
     this.transactionsRepository = transactionsRepository;
   }
 
-  public execute(): Transaction {
-    // TODO
+  public execute({ title, value, type }: Transaction): Transaction {
+    if (type !== 'income' && type !== 'outcome') throw Error ("Operation doesn't exists")
+    const balance = this.transactionsRepository.getBalance()
+    if (type === 'outcome' && value > balance.total) {
+      throw Error ("Insufficient funds")
+    }
+    const transaction = this.transactionsRepository.create({title,value,type})
+    return transaction
   }
 }
 
